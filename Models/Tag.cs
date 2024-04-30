@@ -2,8 +2,9 @@
 
 public partial class Tag
 {
-	public Tag()
+	public Tag(string text)
 	{
+		Text = text;
 		Posts = new HashSet<Post>();
 	}
 

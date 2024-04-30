@@ -11,13 +11,13 @@ internal class Program
 	{
 		using var ctx = new Context();
 
-		ctx.Database.EnsureDeleted();
-		ctx.Database.EnsureCreated();
+		await ctx.Database.EnsureDeletedAsync();
+		await ctx.Database.EnsureCreatedAsync();
 
-		var post = new Post() { Title = "Post 1 Title", Text = "Post 1 Text" };
+		var post = new Post("Post 1 Title", "Post 1 Text");
 
-		var tag1 = new Tag() { Text = "Tag 1 Text" };
-		var tag2 = new Tag() { Text = "Tag 2 Text" };
+		var tag1 = new Tag("Tag 1 Text" );
+		var tag2 = new Tag("Tag 2 Text");
 
 		post.Tags.Add(tag1);
 		post.Tags.Add(tag2);
@@ -32,7 +32,7 @@ internal class Program
 	{
 		using var ctx = new Context();
 
-		return await ctx.Posts.Select(x => x.Tags.Count).FirstAsync();		
+		return await ctx.Posts.Select(x => x.Tags.Count).FirstOrDefaultAsync();
 	}
 
 	//Remove and add the same Tag from the first Post
@@ -40,7 +40,7 @@ internal class Program
 	{
 		using var ctx = new Context();
 
-		var post = ctx.Posts.Include(x => x.Tags).First();
+		var post = await ctx.Posts.Include(x => x.Tags).FirstAsync();
 
 		var tag = post.Tags.First();
 
@@ -61,9 +61,9 @@ internal class Program
 	{
 		using var ctx = new Context();
 
-		var post = ctx.Posts.Include(x => x.Tags).First();
+		var post = await ctx.Posts.Include(x => x.Tags).FirstAsync();
 
-		var tag = new Tag() { Text = "Tag 3 Text" };
+		var tag = new Tag("Tag 3 Text");
 
 		post.Tags.Add(tag);
 
@@ -105,7 +105,7 @@ internal class Program
 
 		await TestAddAndRemoveAsync(false);
 		await TestAddAndRemoveAsync(true);
-		
+
 		await TestRemoveAndAddAsync(false);
 		await TestRemoveAndAddAsync(true);
 	}
